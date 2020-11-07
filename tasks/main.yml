@@ -1,0 +1,63 @@
+---
+- name: rabbitmq-server is installed.
+  apt:
+    pkg: rabbitmq-server
+    state: present
+
+- name: rabbitmq-server is running.
+  systemd:
+    name: rabbitmq-server
+    state: started
+
+- name: rabbitmq vhost exists.
+  rabbitmq_vhost:
+    name: "{{ rabbitmq_vhost }}"
+    state: present
+
+- name: rabbitmq user exists and permissions are set.
+  rabbitmq_user:
+    user: "{{ rabbitmq_user }}"
+    password: "{{ rabbitmq_password }}"
+    permissions:
+      - vhost: "{{ rabbitmq_vhost }}"
+        configure_priv: .*
+        read_priv: .*
+        write_priv: .*
+    state: present
+
+- name: path for celery configuration files is created.
+  file:
+    path: /etc/conf.d/
+    state: directory
+
+- name: celery configuration file is copied to remote server.
+  template:
+    src: "templates/celery"
+    dest: "/etc/conf.d/celery"
+
+- name: systemd tmpfile for celery is copied to remote server.
+  template:
+    src: "templates/celery.conf"
+    dest: "/etc/tmpfiles.d/celery-{{ project_name }}.conf"
+  register: systemd_tmpfile
+
+- name: celery pid and log file paths are created.
+  command: >
+    systemd-tmpfiles --create /etc/tmpfiles.d/celery-{{ project_name }}.conf
+  when: systemd_tmpfile.changed
+
+- name: celery unit file is copied to remote server.
+  template:
+    src: "templates/celery.service"
+    dest: "/etc/systemd/system/celery.service"
+  register: unit_file
+
+- name: reload daemon when unit file changes.
+  systemd:
+    daemon_reload: yes
+  when: unit_file.changed
+
+- name: celery is running
+  systemd:
+    state: started
+    name: celery.service

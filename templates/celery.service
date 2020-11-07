@@ -1,0 +1,17 @@
+[Unit]
+Description=Celery Service
+After=network.target
+
+[Service]
+Type=forking
+User={{ unix_user }}
+Group={{ unix_user }}
+EnvironmentFile=/etc/conf.d/celery
+WorkingDirectory={{ deployment_path }}
+ExecStart=/bin/sh -c '${CELERY_BIN} -A ${CELERY_APP} multi start ${CELERYD_NODES} \
+  --pidfile=${CELERYD_PID_FILE} \
+  --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE}'
+ExecStop=/bin/sh -c '${CELERY_BIN} multi stopwait ${CELERYD_NODES}'
+
+[Install]
+WantedBy=default.target

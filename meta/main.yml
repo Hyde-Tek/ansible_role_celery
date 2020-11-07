@@ -1,0 +1,6 @@
+galaxy_info:
+  author: Nick Chrysochoidis <nxriso@hotmail.com>
+  platforms:
+  - name: "Debian"
+    versions:
+      - "buster"
