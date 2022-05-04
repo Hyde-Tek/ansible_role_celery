@@ -1,4 +1,4 @@
-CELERYD_NODES=4
+CELERYD_NODES=1
 CELERY_BIN="{{ virtualenv }}/bin/celery"
 CELERY_APP="{{ project_name }}"
 CELERYD_PID_FILE="/var/run/celery/{{ project_name }}/{{ project_name }}%n.pid"

@@ -33,7 +33,7 @@
 - name: celery configuration file is copied to remote server.
   template:
     src: "templates/celery"
-    dest: "/etc/conf.d/celery"
+    dest: "/etc/conf.d/celery-{{ project_name }}"
 
 - name: systemd tmpfile for celery is copied to remote server.
   template:
@@ -48,8 +48,8 @@
 
 - name: celery unit file is copied to remote server.
   template:
-    src: "templates/celery.service"
-    dest: "/etc/systemd/system/celery.service"
+    src: "templates/celery@.service"
+    dest: "/etc/systemd/system/celery@.service"
   register: unit_file
 
 - name: reload daemon when unit file changes.
@@ -60,4 +60,4 @@
 - name: celery is running
   systemd:
     state: started
-    name: celery.service
+    name: celery@{{ project_name }}
