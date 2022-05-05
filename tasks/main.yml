@@ -61,3 +61,8 @@
   systemd:
     state: started
     name: celery@{{ project_name }}
+
+- name: celery is reloaded.
+  service:
+    name: celery@{{ project_name }}
+    state: reloaded
