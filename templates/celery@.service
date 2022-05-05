@@ -15,6 +15,7 @@ ExecStop=/bin/sh -c '${CELERY_BIN} multi stopwait ${CELERYD_NODES} \
 ExecReload=/bin/sh -c '${CELERY_BIN} -A ${CELERY_APP} multi restart ${CELERYD_NODES} \
     --pidfile=${CELERYD_PID_FILE} \
     --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE}'
+Restart=always
 
 [Install]
 WantedBy=default.target
